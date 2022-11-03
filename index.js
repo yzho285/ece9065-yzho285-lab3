@@ -11,7 +11,7 @@ const raw_artists = [];
 const raw_tracks = [];
 
 
-fs.createReadStream("./lab3-data/genres.csv")
+fs.createReadStream("C:/yijie/ECE9065/lab3-resource/lab3-data/lab3-data/genres.csv")
   .pipe(csvParser())
   .on("data", (data) => {
     genres.push(data);
@@ -20,7 +20,7 @@ fs.createReadStream("./lab3-data/genres.csv")
     //console.log(genres);
   });
 
-fs.createReadStream("./lab3-data/raw_albums.csv")
+fs.createReadStream("C:/yijie/ECE9065/lab3-resource/lab3-data/lab3-data/raw_albums.csv")
   .pipe(csvParser())
   .on("data", (data) => {
     raw_albums.push(data);
@@ -29,7 +29,7 @@ fs.createReadStream("./lab3-data/raw_albums.csv")
     //console.log(raw_albums);
   });
 
-fs.createReadStream("./lab3-data/raw_artists.csv")
+fs.createReadStream("C:/yijie/ECE9065/lab3-resource/lab3-data/lab3-data/raw_artists.csv")
   .pipe(csvParser())
   .on("data", (data) => {
     raw_artists.push(data);
@@ -38,7 +38,7 @@ fs.createReadStream("./lab3-data/raw_artists.csv")
     //console.log(raw_artists);
   });
 
-fs.createReadStream("./lab3-data/raw_tracks.csv")
+fs.createReadStream("C:/yijie/ECE9065/lab3-resource/lab3-data/lab3-data/raw_tracks.csv")
   .pipe(csvParser())
   .on("data", (data) => {
     raw_tracks.push(data);
