@@ -81,8 +81,9 @@ app.get('/api/raw_tracks/searchbyartistname/:artist_name', (req, res) => {
     const artistid_artistname = [];
     let j=0;
     for(i in raw_artists){
-        if (artist_name == raw_artists[i].artist_name){
-            artistid_artistname[j] = raw_artists[i].artist_id;
+        if (raw_artists[i].artist_name.includes(artist_name)){
+            let temp = {"artist_id":raw_artists[i].artist_id};
+            artistid_artistname.push(temp);
             j++;
         }
     }
@@ -108,42 +109,24 @@ app.get('/api/raw_tracks/:track_id', (req, res) => {
     else {
         res.status(404).send(`Track ${track_id} does not exist.`);
     }
-    res.send(raw_tracks);
 });
 
-app.get('/api/raw_tracks/searchbyalbumtitle/:album_title', (req, res) => {
-    const album_title = req.params.album_title;
-    const trackid_albumtitle = [];
+app.get('/api/raw_tracks/searchbyalbumtitle/:album_track_title', (req, res) => {
+    const album_track_title = req.params.album_track_title;
+    let trackid_album_track_title = [];
     let j = 0;
     for(i in raw_tracks){
-        if (album_title == raw_tracks[i].album_title && j<5){
-            trackid_albumtitle[j] = raw_tracks[i].track_id;
+        if ((raw_tracks[i].album_title.includes(album_track_title) || raw_tracks[i].track_title.includes(album_track_title)) && j<5){
+            let temp = {"track_id":raw_tracks[i].track_id};
+            trackid_album_track_title.push(temp);
             j++;
         }
     }
-    if (trackid_albumtitle[0]!=null) {
-        res.send(trackid_albumtitle);
+    if (trackid_album_track_title[0]!=null) {
+        res.send(trackid_album_track_title);
     }
     else {
-        res.status(404).send(`Album ${album_title} does not exist.`)
-    }
-});
-
-app.get('/api/raw_tracks/searchbytracktitle/:track_title', (req, res) => {
-    const track_title = req.params.track_title;
-    const trackid_tracktitle = [];
-    let j = 0;
-    for(i in raw_tracks){
-        if (track_title == raw_tracks[i].track_title && j<5){
-            trackid_tracktitle[j] = raw_tracks[i].track_id;
-            j++;
-        }
-    }
-    if (trackid_tracktitle[0]!=null) {
-        res.send(trackid_tracktitle);
-    }
-    else {
-        res.status(404).send(`Track ${track_title} does not exist.`)
+        res.status(404).send(`Album/track ${album_track_title} does not exist.`)
     }
 });
 

@@ -1,6 +1,6 @@
 function SearchByartistID(){
     let artistID = document.getElementById("searchartdetailbyartid").value;
-    const url = `http://ec2-44-202-137-17.compute-1.amazonaws.com:3000/api/raw_artists/${artistID}`;
+    const url = `/api/raw_artists/${artistID}`;
     fetch(url)
       .then((response) => {
         return response.json();
