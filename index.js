@@ -4,14 +4,20 @@ const port = 3000;
 
 const fs = require("fs");
 const csvParser = require("csv-parser");
-const { raw } = require('body-parser');
+//const { raw } = require('body-parser');
+const path = require("path")
 
-const genres = [];
-const raw_albums = [];
-const raw_artists = [];
-const raw_tracks = [];
+var flatCache = require('flat-cache');
+const { raw } = require('express');
+//var cache = flatCache.load('cacheId');
 
 
+let genres = [];
+let raw_albums = [];
+let raw_artists = [];
+let raw_tracks = [];
+
+/*
 fs.createReadStream("C:/yijie/ECE9065/lab3-resource/lab3-data/lab3-data/genres.csv")
   .pipe(csvParser())
   .on("data", (data) => {
@@ -19,6 +25,12 @@ fs.createReadStream("C:/yijie/ECE9065/lab3-resource/lab3-data/lab3-data/genres.c
   })
   .on("end", () => {
     //console.log(genres);
+    var cache = flatCache.load('genre', path.resolve('./flat-cache'));
+    for(i=0;i<genres.length;i++){
+        genreKey='genres'+genres[i].genre_id;
+        cache.setKey(genreKey,genres[i]);
+        cache.save(true);
+    }
   });
 
 fs.createReadStream("C:/yijie/ECE9065/lab3-resource/lab3-data/lab3-data/raw_albums.csv")
@@ -28,6 +40,12 @@ fs.createReadStream("C:/yijie/ECE9065/lab3-resource/lab3-data/lab3-data/raw_albu
   })
   .on("end", () => {
     //console.log(raw_albums);
+    var cache = flatCache.load('albums', path.resolve('./flat-cache'));
+    for(i=0;i<raw_albums.length;i++){
+        albumKey='albums'+raw_albums[i].album_id;
+        cache.setKey(albumKey,raw_albums[i]);
+        cache.save(true);
+    }
   });
 
 fs.createReadStream("C:/yijie/ECE9065/lab3-resource/lab3-data/lab3-data/raw_artists.csv")
@@ -37,6 +55,12 @@ fs.createReadStream("C:/yijie/ECE9065/lab3-resource/lab3-data/lab3-data/raw_arti
   })
   .on("end", () => {
     //console.log(raw_artists);
+    var cache = flatCache.load('artists', path.resolve('./flat-cache'));
+    for(i=0;i<raw_artists.length;i++){
+        artistKey='artists'+raw_artists[i].artist_id;
+        cache.setKey(artistKey,raw_artists[i]);
+        cache.save(true);
+    }
   });
 
 fs.createReadStream("C:/yijie/ECE9065/lab3-resource/lab3-data/lab3-data/raw_tracks.csv")
@@ -46,7 +70,49 @@ fs.createReadStream("C:/yijie/ECE9065/lab3-resource/lab3-data/lab3-data/raw_trac
   })
   .on("end", () => {
     //console.log(raw_tracks);
+    var cache = flatCache.load('tracks', path.resolve('./flat-cache'));
+    for(i=0;i<raw_tracks.length;i++){
+        trackKey='tracks'+raw_tracks[i].track_id;
+        cache.setKey(trackKey,raw_tracks[i]);
+        cache.save(true);
+    }
   });
+*/
+var cache = flatCache.load('genre', path.resolve('./flat-cache'));
+let genres_temp = cache.all();
+let genres_key = Object.keys(genres_temp);
+for(i=0;i<Object.keys(genres_key).length;i++){
+    let tempindex = genres_key[i];
+    genres.push(genres_temp[tempindex]);
+}
+
+var cache = flatCache.load('albums', path.resolve('./flat-cache'));
+let albums_temp = cache.all();
+let albums_key = Object.keys(albums_temp);
+for(i=0;i<Object.keys(albums_key).length;i++){
+    let tempindex = albums_key[i];
+    raw_albums.push(albums_temp[tempindex]);
+}
+
+var cache = flatCache.load('artists', path.resolve('./flat-cache'));
+let artists_temp = cache.all();
+let artist_key = Object.keys(artists_temp);
+for(i=0;i<Object.keys(artist_key).length;i++){
+    let tempindex = artist_key[i];
+    raw_artists.push(artists_temp[tempindex]);
+}
+
+var cache = flatCache.load('tracks', path.resolve('./flat-cache'));
+let tracks_temp = cache.all();
+let track_key = Object.keys(tracks_temp);
+for(i=0;i<Object.keys(track_key).length;i++){
+    let tempindex = track_key[i];
+    raw_tracks.push(tracks_temp[tempindex]);
+}
+
+
+
+
 
 
 app.use('/', express.static('static'));
@@ -134,3 +200,5 @@ app.get('/api/raw_tracks/searchbyalbumtitle/:album_track_title', (req, res) => {
 app.listen(port, () => {
     //console.log(`Listening on port ${port}`);
 });
+
+

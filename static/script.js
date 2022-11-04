@@ -6,7 +6,6 @@ function GetGenreDetails(){
         })
         .then((data) =>{
             let result = data;
-            console.log(result);
             for(i=0;i<result.length;i++){
                 text =  "genre names:" + result[i].title + "genre ID:" + result[i].genre_id + "parents ID" + result[i].parent;
                 const getPos = document.getElementById("searchartdetailbyartid");
