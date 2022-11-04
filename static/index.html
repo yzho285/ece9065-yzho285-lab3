@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Parts Store</title>
+<title>Lab3</title>
 <meta name="description" content="">
 <meta name="author" content="">
 <link rel="stylesheet" href="style.css">
@@ -10,11 +10,22 @@
 <body>
 <!-- Place your content here -->
 <h1>Lab3</h1>
-<input type="text" id="searchartdetailbyartid" placeholder="inser artist id..."><!-- input to search by number-->
+<button onclick="GetGenreDetails()">Click to get genre details</button>
+</br>
+<input type="text" id="searchartdetailbyartid" placeholder="insert artist id..."><!-- input to search by number-->
 <button onclick="SearchByartistID()">Search by artist ID</button>
 </br>
-<input type="text" id="searchartdetailbytrackid" placeholder="inser track id..."><!-- input to search by number-->
-<button onclick="SearchBytrackID()">Search by artist ID</button>
+<input type="text" id="searchartdetailbytrackid" placeholder="insert track id..."><!-- input to search by number-->
+<button onclick="SearchBytrackID()">Search by track ID</button>
+</br>
+<input type="text" id="searchtrackIDbytracktitlealbum" placeholder="insert track title or album..."><!-- input to search by number-->
+<button onclick="SearchBytracktitlealbum()">Search by track title or album</button>
+</br>
+<input type="text" id="searchartistIDbyartistname" placeholder="insert artist name..."><!-- input to search by number-->
+<button onclick="SearchByartistname()">Search by artist name</button>
+</br>
+<input type="text" id="createnewtracklist" placeholder="insert track name..."><!-- input to search by number-->
+<button onclick="CreateNewTrackList()">Create a new track list</button>
 
 
 <!-- Embedded JavaScript go here -->

@@ -4,6 +4,7 @@ const port = 3000;
 
 const fs = require("fs");
 const csvParser = require("csv-parser");
+const { raw } = require('body-parser');
 
 const genres = [];
 const raw_albums = [];
@@ -82,7 +83,7 @@ app.get('/api/raw_tracks/searchbyartistname/:artist_name', (req, res) => {
     let j=0;
     for(i in raw_artists){
         if (raw_artists[i].artist_name.includes(artist_name)){
-            let temp = {"artist_id":raw_artists[i].artist_id};
+            let temp = {"artist_id":raw_artists[i].artist_id,"artist_name":raw_artists[i].artist_name};
             artistid_artistname.push(temp);
             j++;
         }
@@ -117,7 +118,7 @@ app.get('/api/raw_tracks/searchbyalbumtitle/:album_track_title', (req, res) => {
     let j = 0;
     for(i in raw_tracks){
         if ((raw_tracks[i].album_title.includes(album_track_title) || raw_tracks[i].track_title.includes(album_track_title)) && j<5){
-            let temp = {"track_id":raw_tracks[i].track_id};
+            let temp = {"track_id":raw_tracks[i].track_id,"track_title":raw_tracks[i].track_title,"album_title":raw_tracks[i].album_title};
             trackid_album_track_title.push(temp);
             j++;
         }
