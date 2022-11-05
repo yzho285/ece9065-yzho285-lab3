@@ -146,3 +146,52 @@ function CreateNewTrackList(){
         alert("track already exists.");
       });
 }
+
+function SaveTrackID(){
+    let track_name = document.getElementById("savetrackidlist").value;
+    let track_ids = document.getElementById("savetrackid").value;
+    const url = `/api/savetrackid/${track_name}`;
+    fetch(url,{
+        method:"POST",
+        body: JSON.stringify({
+            tracklistname:track_name,
+            trackids:track_ids,
+        }),
+        headers: {
+            'Content-Type': 'application/json;charset=utf-8'
+         }
+    })
+    .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        let result = data;
+        console.log(result);
+        alert("Save succeeded.")
+      })
+      .catch(function(error) {
+        //console.log(error);
+        alert("tracklists doesn't exists.");
+      });
+}
+
+function SearchByTracklistname(){
+    let tracklist_name = document.getElementById("searchtracklistidbyname").value;
+    const url = `/api/track_list/${tracklist_name}`;
+    fetch(url)
+        .then((response) => {
+            return response.json();
+        })
+        .then((data) =>{
+            let result = data;
+            console.log(result.trackids);
+            text =  "TrackIDs:" + result.trackids;
+            const getPos = document.getElementById("deletetracklistidbyname");
+            const addDiv = document.createElement('div');
+            const br = document.createElement('br');
+            textnode = document.createTextNode(text);
+            addDiv.appendChild(textnode);
+            addDiv.appendChild(br);
+            document.body.insertBefore(addDiv,getPos);
+        })
+}

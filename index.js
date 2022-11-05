@@ -201,6 +201,17 @@ app.get('/api/raw_tracks/:track_id', (req, res) => {
     }
 });
 
+app.get('/api/track_list/:track_listname', (req, res) => {
+    const track_listname = req.params.track_listname;
+    const track_list_details = track_list.find(p => p.tracklistname === track_listname);
+    if (track_list_details) {
+        res.send(track_list_details);
+    }
+    else {
+        res.status(404).send(`Tracklist ${track_listname} does not exist.`);
+    }
+});
+
 app.get('/api/raw_tracks/searchbyalbumtitle/:album_track_title', (req, res) => {
     const album_track_title = req.params.album_track_title;
     let trackid_album_track_title = [];
@@ -232,8 +243,31 @@ app.put('/api/createtracklist/:tracklistname', (req, res) => {
         track_list.push(newtracklist);
         track_list_name.push(newtracklist.tracklistname);
         var cache = flatCache.load('tracklist', path.resolve('./flat-cache'));
-        trackKey='trackslist'+newtracklist.tracklistname;
+        let trackKey='trackslist'+newtracklist.tracklistname;
         cache.setKey(trackKey,newtracklist);
+        cache.save(true);
+        console.log(track_list);
+        console.log(track_list_name);
+        res.send(track_list);
+    }
+});
+
+app.post('/api/savetrackid/:tracklistname', (req, res) => {
+    const newtracklistid = req.body;
+    const tracklistname = req.params.tracklistname;
+    const trackids = req.body.trackids;
+    console.log(track_list);
+    console.log(newtracklistid);
+    console.log(trackids);
+    const trackindex = track_list.findIndex(p => p.tracklistname === tracklistname);
+    if(trackindex<0){
+        res.send(`${tracklistname} doesn't exist`);
+    }
+    else{
+        track_list[trackindex].trackids = newtracklistid.trackids;
+        var cache = flatCache.load('tracklist', path.resolve('./flat-cache'));
+        let trackKey='trackslist'+newtracklistid.tracklistname;
+        cache.setKey(trackKey,newtracklistid);
         cache.save(true);
         console.log(track_list);
         console.log(track_list_name);
