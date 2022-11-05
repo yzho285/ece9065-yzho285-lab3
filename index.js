@@ -110,12 +110,35 @@ for(i=0;i<Object.keys(track_key).length;i++){
     raw_tracks.push(tracks_temp[tempindex]);
 }
 
+/*
+let track_list = [{"tracklistname":"tracklistname","trackids":"trackids"}];
+var cache = flatCache.load('tracklist', path.resolve('./flat-cache'));
+for(i=0;i<track_list.length;i++){
+    trackKey='trackslist'+track_list[i].tracklistname;
+    cache.setKey(trackKey,track_list[i]);
+    cache.save(true);
+}
+*/
 
+let track_list = [];
+let track_list_name = [];
 
+var cache = flatCache.load('tracklist', path.resolve('./flat-cache'));
+let tracklist_temp = cache.all();
+let tracklist_key = Object.keys(tracklist_temp);
+for(i=0;i<Object.keys(tracklist_key).length;i++){
+    let tempindex = tracklist_key[i];
+    track_list.push(tracklist_temp[tempindex]);
+    track_list_name.push(tracklist_temp[tempindex].tracklistname);
+}
+//console.log(track_list);
+//console.log(track_list_name);
 
 
 
 app.use('/', express.static('static'));
+
+app.use(express.json());
 
 app.get('/api/genres', (req, res) => {
     //console.log(`GET request for ${req.url}`)
@@ -196,6 +219,28 @@ app.get('/api/raw_tracks/searchbyalbumtitle/:album_track_title', (req, res) => {
         res.status(404).send(`Album/track ${album_track_title} does not exist.`)
     }
 });
+
+app.put('/api/createtracklist/:tracklistname', (req, res) => {
+    const newtracklist = req.body;
+    const newtracklistname = req.params.tracklistname;
+    //console.log(newtracklist);
+    //console.log(track_list_name);
+    if(track_list_name.includes(newtracklistname)){
+        res.send(`${newtracklistname} exists`);
+    }
+    else{
+        track_list.push(newtracklist);
+        track_list_name.push(newtracklist.tracklistname);
+        var cache = flatCache.load('tracklist', path.resolve('./flat-cache'));
+        trackKey='trackslist'+newtracklist.tracklistname;
+        cache.setKey(trackKey,newtracklist);
+        cache.save(true);
+        console.log(track_list);
+        console.log(track_list_name);
+        res.send(track_list);
+    }
+});
+
 
 app.listen(port, () => {
     //console.log(`Listening on port ${port}`);

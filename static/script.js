@@ -119,3 +119,30 @@ function SearchByartistname(){
         console.log(error);
       });
 }
+
+function CreateNewTrackList(){
+    let new_track_name = document.getElementById("createnewtracklist").value;
+    const url = `/api/createtracklist/${new_track_name}`;
+    fetch(url,{
+        method:"PUT",
+        body: JSON.stringify({
+            tracklistname:new_track_name,
+            trackids:"",
+        }),
+        headers: {
+            'Content-Type': 'application/json;charset=utf-8'
+         }
+    })
+    .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        let result = data;
+        //console.log(result);
+        alert("create succeeded.")
+      })
+      .catch(function(error) {
+        //console.log(error);
+        alert("track already exists.");
+      });
+}
