@@ -40,9 +40,21 @@
 <button onclick="GetTrackListOverview()">Get track list overview</button>
 </br>
 <input type="text" id="getdetailsbyartistnametrackalbumtitle" placeholder="insert artist name, track title or album title...">
+<select id="sort1">
+    <option value ="artist_name">artist</option>
+    <option value ="track_title">track</option>
+    <option value="album_title">album</option>
+    <option value="track_duration">length</option>
+  </select>
 <button onclick="Getdetailsbyartistnametrackalbumtitle()">Search by name</button>
 </br>
 <input type="text" id="getlistdetails" placeholder="insert track list name...">
+<select id="sort2">
+    <option value ="artist_name">artist</option>
+    <option value ="track_title">track</option>
+    <option value="album_title">album</option>
+    <option value="track_duration">length</option>
+  </select>
 <button onclick="Getlistdetails()">Search by track list name</button>
 
 <!-- Embedded JavaScript go here -->
