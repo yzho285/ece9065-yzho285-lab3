@@ -4,11 +4,9 @@ const port = 3000;
 
 const fs = require("fs");
 const csvParser = require("csv-parser");
-//const { raw } = require('body-parser');
 const path = require("path")
 
 var flatCache = require('flat-cache');
-const { raw } = require('express');
 //var cache = flatCache.load('cacheId');
 
 
@@ -171,7 +169,7 @@ app.get('/api/raw_tracks/searchbyartistname/:artist_name', (req, res) => {
     const artistid_artistname = [];
     let j=0;
     for(i in raw_artists){
-        if (raw_artists[i].artist_name.includes(artist_name)){
+        if (raw_artists[i].artist_name.toLowerCase().includes(artist_name.toLowerCase())){
             let temp = {"artist_id":raw_artists[i].artist_id,"artist_name":raw_artists[i].artist_name};
             artistid_artistname.push(temp);
             j++;
@@ -217,7 +215,7 @@ app.get('/api/raw_tracks/searchbyalbumtitle/:album_track_title', (req, res) => {
     let trackid_album_track_title = [];
     let j = 0;
     for(i in raw_tracks){
-        if ((raw_tracks[i].album_title.includes(album_track_title) || raw_tracks[i].track_title.includes(album_track_title)) && j<5){
+        if ((raw_tracks[i].album_title.toLowerCase().includes(album_track_title.toLowerCase()) || raw_tracks[i].track_title.toLowerCase().includes(album_track_title.toLowerCase())) && j<5){
             let temp = {"track_id":raw_tracks[i].track_id,"track_title":raw_tracks[i].track_title,"album_title":raw_tracks[i].album_title};
             trackid_album_track_title.push(temp);
             j++;
@@ -231,21 +229,30 @@ app.get('/api/raw_tracks/searchbyalbumtitle/:album_track_title', (req, res) => {
     }
 });
 
-app.get('/api/track_list_details', (req, res) => {
-    console.log(track_list);
+app.get('/api/track_list_overview', (req, res) => {
+    //console.log(track_list);
     let track_list_details = [];
     for(i=0;i<Object.keys(track_list).length;i++){
         let track_list_ids = track_list[i].trackids.split(",");
         let numberOftracks = track_list_ids.length;
+        console.log(numberOftracks);
         let totalmin = 0;
         let totalsec = 0;
         for(j=0;j<numberOftracks;j++){
             let temptimeindex = raw_tracks.findIndex(p => p.track_id === track_list_ids[j]);
-            let timetemp = raw_tracks[temptimeindex].track_duration;
-            let tempmin = parseInt(timetemp.split(":")[0]);
-            let tempsec = parseInt(timetemp.split(":")[1]);
-            totalmin = totalmin + tempmin;
-            totalsec = totalsec + tempsec;
+            if(temptimeindex==-1){
+                totalmin = 0;
+                totalsec = 0;
+                numberOftracks = 0;
+            }
+            else{
+                let timetemp = raw_tracks[temptimeindex].track_duration;
+                let tempmin = parseInt(timetemp.split(":")[0]);
+                let tempsec = parseInt(timetemp.split(":")[1]);
+                totalmin = totalmin + tempmin;
+                totalsec = totalsec + tempsec;
+            }
+            
         }
         let sec = totalsec%60;
         let min = (totalmin+parseInt(totalsec/60))%60;
@@ -262,10 +269,47 @@ app.get('/api/track_list_details', (req, res) => {
     res.send(track_list_details);
 });
 
+app.get('/api/raw_tracks/searchbyartisttrackalbum/:name', (req, res) => {
+    const name = req.params.name;
+    let results = [];
+    let j = 0;
+    for(i in raw_tracks){
+        if (raw_tracks[i].album_title.toLowerCase().includes(name.toLowerCase()) || raw_tracks[i].track_title.toLowerCase().includes(name.toLowerCase()) || raw_tracks[i].artist_name.toLowerCase().includes(name.toLowerCase())){
+            let temp = raw_tracks[i];
+            results.push(temp);
+            j++;
+        }
+    }
+    if (results[0]!=null) {
+        res.send(results);
+    }
+    else {
+        res.status(404).send(`Album/track ${name} does not exist.`)
+    }
+});
+
+app.get('/api/track_list_details/:listname', (req, res) => {
+    let listname = req.params.listname;
+    let track_list_details = [];
+    if(track_list_name.indexOf(listname)!=-1){
+        const track_list_ids = track_list.find(p => p.tracklistname === listname).trackids.split(",");
+        for(i=0;i<track_list_ids.length;i++){
+            let track_details_temp = raw_tracks.find(p => p.track_id === track_list_ids[i]);
+            track_list_details.push(track_details_temp);
+        }
+        res.send(track_list_details);
+    }
+    else{
+        res.status(404).send(`${listname} dose not exists.`)
+    }
+    
+
+});
+
 app.put('/api/createtracklist/:tracklistname', (req, res) => {
     const newtracklist = req.body;
     const newtracklistname = req.params.tracklistname;
-    //console.log(newtracklist);
+    console.log(newtracklist);
     //console.log(track_list_name);
     if(track_list_name.includes(newtracklistname)){
         res.status(404).send(`${newtracklistname} exists`);

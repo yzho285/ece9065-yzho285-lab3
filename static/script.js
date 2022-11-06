@@ -143,7 +143,7 @@ function CreateNewTrackList(){
       })
       .catch(function(error) {
         //console.log(error);
-        alert("track already exists.");
+        alert("List already exists.");
       });
 }
 
@@ -194,6 +194,10 @@ function SearchByTracklistname(){
             addDiv.appendChild(br);
             document.body.insertBefore(addDiv,getPos);
         })
+        .catch(function(error) {
+            //console.log(error);
+            alert("List name doesn't exists.");
+          });
 }
 
 function DeleteByTracklistname(){
@@ -216,8 +220,8 @@ function DeleteByTracklistname(){
       });
 }
 
-function GetTrackListDetails(){
-    const url = `/api/track_list_details`;
+function GetTrackListOverview(){
+    const url = `/api/track_list_overview`;
     fetch(url)
         .then((response) => {
             return response.json();
@@ -226,6 +230,28 @@ function GetTrackListDetails(){
             let result = data;
             for(i=0;i<result.length;i++){
                 text =  "Tracklist name:" + result[i].tracklistname + "numberOftracks:" + result[i].numberOftracks + "timeduration:" + result[i].timeduration;
+                const getPos = document.getElementById("getdetailsbyartistnametrackalbumtitle");
+                const addDiv = document.createElement('div');
+                const br = document.createElement('br');
+                textnode = document.createTextNode(text);
+                addDiv.appendChild(textnode);
+                addDiv.appendChild(br);
+                document.body.insertBefore(addDiv,getPos);
+            } 
+        })
+}
+
+function Getdetailsbyartistnametrackalbumtitle(){
+    const name = document.getElementById("getdetailsbyartistnametrackalbumtitle").value;
+    const url = `/api/raw_tracks/searchbyartisttrackalbum/${name}`;
+    fetch(url)
+        .then((response) => {
+            return response.json();
+        })
+        .then((data) =>{
+            let result = data;
+            for(i=0;i<result.length;i++){
+                text =  JSON.stringify(result[i]);
                 const getPos = document.getElementById("deletetracklistidbyname");
                 const addDiv = document.createElement('div');
                 const br = document.createElement('br');
@@ -235,4 +261,34 @@ function GetTrackListDetails(){
                 document.body.insertBefore(addDiv,getPos);
             } 
         })
+        .catch(function(error) {
+            //console.log(error);
+            alert("Name doesn't exists.");
+          });
+}
+
+function Getlistdetails(){
+    const listname = document.getElementById("getlistdetails").value;
+    const url = `/api/track_list_details/${listname}`;
+    fetch(url)
+        .then((response) => {
+            return response.json();
+        })
+        .then((data) =>{
+            let result = data;
+            for(i=0;i<result.length;i++){
+                text =  "Artist name:" + result[i].artist_name + "Track title:" + result[i].track_title + "Album title:" + result[i].album_title + "Play time:" + result[i].track_duration;
+                const getPos = document.getElementById("getdetailsbyartistnametrackalbumtitle");
+                const addDiv = document.createElement('div');
+                const br = document.createElement('br');
+                textnode = document.createTextNode(text);
+                addDiv.appendChild(textnode);
+                addDiv.appendChild(br);
+                document.body.insertBefore(addDiv,getPos);
+            } 
+        })
+        .catch(function(error) {
+            //console.log(error);
+            alert("list name doesn't exists.");
+          });
 }
