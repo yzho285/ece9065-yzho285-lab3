@@ -4,7 +4,8 @@ const port = 3000;
 
 const fs = require("fs");
 const csvParser = require("csv-parser");
-const path = require("path")
+const path = require("path");
+const { check, validationResult } = require("express-validator");
 
 var flatCache = require('flat-cache');
 //var cache = flatCache.load('cacheId');
@@ -153,7 +154,7 @@ app.get('/api/raw_artists', (req, res) => {
     res.send(raw_artists);
 });
 
-app.get('/api/raw_artists/:artist_id', (req, res) => {
+app.get('/api/raw_artists/:artist_id', check('artist_id').isNumeric().trim().escape(),(req, res) => {
     const artist_id = req.params.artist_id;
     const artist_details = raw_artists.find(p => p.artist_id === artist_id);
     if (artist_details) {
@@ -164,7 +165,7 @@ app.get('/api/raw_artists/:artist_id', (req, res) => {
     }
 });
 
-app.get('/api/raw_tracks/searchbyartistname/:artist_name', (req, res) => {
+app.get('/api/raw_tracks/searchbyartistname/:artist_name', check('artist_name').trim().escape(),(req, res) => {
     const artist_name = req.params.artist_name;
     const artistid_artistname = [];
     let j=0;
@@ -188,7 +189,7 @@ app.get('/api/raw_tracks', (req, res) => {
     res.send(raw_tracks);
 });
 
-app.get('/api/raw_tracks/:track_id', (req, res) => {
+app.get('/api/raw_tracks/:track_id', check('track_id').isNumeric().trim().escape(),(req, res) => {
     const track_id = req.params.track_id;
     const track_details = raw_tracks.find(p => p.track_id === track_id);
     if (track_details) {
@@ -199,7 +200,7 @@ app.get('/api/raw_tracks/:track_id', (req, res) => {
     }
 });
 
-app.get('/api/track_list/:track_listname', (req, res) => {
+app.get('/api/track_list/:track_listname', check('track_listname').trim().escape(),(req, res) => {
     const track_listname = req.params.track_listname;
     const track_list_details = track_list.find(p => p.tracklistname === track_listname);
     if (track_list_details) {
@@ -210,7 +211,7 @@ app.get('/api/track_list/:track_listname', (req, res) => {
     }
 });
 
-app.get('/api/raw_tracks/searchbyalbumtitle/:album_track_title', (req, res) => {
+app.get('/api/raw_tracks/searchbyalbumtitle/:album_track_title', check('album_track_title').trim().escape(),(req, res) => {
     const album_track_title = req.params.album_track_title;
     let trackid_album_track_title = [];
     let j = 0;
@@ -269,7 +270,7 @@ app.get('/api/track_list_overview', (req, res) => {
     res.send(track_list_details);
 });
 
-app.get('/api/raw_tracks/searchbyartisttrackalbum/:name', (req, res) => {
+app.get('/api/raw_tracks/searchbyartisttrackalbum/:name', check('name').trim().escape(),(req, res) => {
     const name = req.params.name;
     let results = [];
     let j = 0;
@@ -288,7 +289,7 @@ app.get('/api/raw_tracks/searchbyartisttrackalbum/:name', (req, res) => {
     }
 });
 
-app.get('/api/track_list_details/:listname', (req, res) => {
+app.get('/api/track_list_details/:listname', check('listname').trim().escape(),(req, res) => {
     let listname = req.params.listname;
     let track_list_details = [];
     if(track_list_name.indexOf(listname)!=-1){
@@ -306,10 +307,10 @@ app.get('/api/track_list_details/:listname', (req, res) => {
 
 });
 
-app.put('/api/createtracklist/:tracklistname', (req, res) => {
+app.put('/api/createtracklist/:tracklistname', check('tracklistname').trim().escape(),(req, res) => {
     const newtracklist = req.body;
     const newtracklistname = req.params.tracklistname;
-    console.log(newtracklist);
+    //console.log(newtracklist);
     //console.log(track_list_name);
     if(track_list_name.includes(newtracklistname)){
         res.status(404).send(`${newtracklistname} exists`);
@@ -327,7 +328,7 @@ app.put('/api/createtracklist/:tracklistname', (req, res) => {
     }
 });
 
-app.post('/api/savetrackid/:tracklistname', (req, res) => {
+app.post('/api/savetrackid/:tracklistname', check('tracklistname').trim().escape(),(req, res) => {
     const newtracklistid = req.body;
     const tracklistname = req.params.tracklistname;
     const trackids = req.body.trackids;
@@ -350,7 +351,7 @@ app.post('/api/savetrackid/:tracklistname', (req, res) => {
     }
 });
 
-app.delete('/api/deletetracklist/:tracklistname', (req, res) => {
+app.delete('/api/deletetracklist/:tracklistname', check('tracklistname').trim().escape(),(req, res) => {
     const tracklistname = req.params.tracklistname;
     const trackindex = track_list.findIndex(p => p.tracklistname === tracklistname);
     const tracknameindex = track_list_name.findIndex(p => p === tracklistname);
