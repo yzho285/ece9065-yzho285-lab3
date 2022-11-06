@@ -195,3 +195,44 @@ function SearchByTracklistname(){
             document.body.insertBefore(addDiv,getPos);
         })
 }
+
+function DeleteByTracklistname(){
+    let tracklist_name = document.getElementById("deletetracklistidbyname").value;
+    const url = `/api/deletetracklist/${tracklist_name}`;
+    fetch(url,{
+        method:"DELETE",
+    })
+    .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        let result = data;
+        console.log(result);
+        alert("Delete succeeded.")
+      })
+      .catch(function(error) {
+        //console.log(error);
+        alert("tracklist name doesn't exists.");
+      });
+}
+
+function GetTrackListDetails(){
+    const url = `/api/track_list_details`;
+    fetch(url)
+        .then((response) => {
+            return response.json();
+        })
+        .then((data) =>{
+            let result = data;
+            for(i=0;i<result.length;i++){
+                text =  "Tracklist name:" + result[i].tracklistname + "numberOftracks:" + result[i].numberOftracks + "timeduration:" + result[i].timeduration;
+                const getPos = document.getElementById("deletetracklistidbyname");
+                const addDiv = document.createElement('div');
+                const br = document.createElement('br');
+                textnode = document.createTextNode(text);
+                addDiv.appendChild(textnode);
+                addDiv.appendChild(br);
+                document.body.insertBefore(addDiv,getPos);
+            } 
+        })
+}

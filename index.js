@@ -231,13 +231,44 @@ app.get('/api/raw_tracks/searchbyalbumtitle/:album_track_title', (req, res) => {
     }
 });
 
+app.get('/api/track_list_details', (req, res) => {
+    console.log(track_list);
+    let track_list_details = [];
+    for(i=0;i<Object.keys(track_list).length;i++){
+        let track_list_ids = track_list[i].trackids.split(",");
+        let numberOftracks = track_list_ids.length;
+        let totalmin = 0;
+        let totalsec = 0;
+        for(j=0;j<numberOftracks;j++){
+            let temptimeindex = raw_tracks.findIndex(p => p.track_id === track_list_ids[j]);
+            let timetemp = raw_tracks[temptimeindex].track_duration;
+            let tempmin = parseInt(timetemp.split(":")[0]);
+            let tempsec = parseInt(timetemp.split(":")[1]);
+            totalmin = totalmin + tempmin;
+            totalsec = totalsec + tempsec;
+        }
+        let sec = totalsec%60;
+        let min = (totalmin+parseInt(totalsec/60))%60;
+        let hour = parseInt((totalmin+parseInt(totalsec/60))/60);
+        if(hour==0){
+            track_duration_temp = min+":"+sec;
+        }
+        else{
+            track_duration_temp = hour+":"+min+":"+sec;
+        }
+        let track_list_detail_temp = {"tracklistname":track_list[i].tracklistname,"numberOftracks":numberOftracks,"timeduration":track_duration_temp};
+        track_list_details.push(track_list_detail_temp);
+    }
+    res.send(track_list_details);
+});
+
 app.put('/api/createtracklist/:tracklistname', (req, res) => {
     const newtracklist = req.body;
     const newtracklistname = req.params.tracklistname;
     //console.log(newtracklist);
     //console.log(track_list_name);
     if(track_list_name.includes(newtracklistname)){
-        res.send(`${newtracklistname} exists`);
+        res.status(404).send(`${newtracklistname} exists`);
     }
     else{
         track_list.push(newtracklist);
@@ -261,7 +292,7 @@ app.post('/api/savetrackid/:tracklistname', (req, res) => {
     console.log(trackids);
     const trackindex = track_list.findIndex(p => p.tracklistname === tracklistname);
     if(trackindex<0){
-        res.send(`${tracklistname} doesn't exist`);
+        res.status(404).send(`${tracklistname} doesn't exist`);
     }
     else{
         track_list[trackindex].trackids = newtracklistid.trackids;
@@ -275,6 +306,26 @@ app.post('/api/savetrackid/:tracklistname', (req, res) => {
     }
 });
 
+app.delete('/api/deletetracklist/:tracklistname', (req, res) => {
+    const tracklistname = req.params.tracklistname;
+    const trackindex = track_list.findIndex(p => p.tracklistname === tracklistname);
+    const tracknameindex = track_list_name.findIndex(p => p === tracklistname);
+    //console.log(track_list_name);
+    if(trackindex<0){
+        res.status(404).send(`${tracklistname} doesn't exist`);
+    }
+    else{
+        track_list.splice(trackindex,1);
+        track_list_name.splice(tracknameindex,1)
+        var cache = flatCache.load('tracklist', path.resolve('./flat-cache'));
+        let trackKey='trackslist'+tracklistname;
+        cache.removeKey(trackKey);
+        cache.save(true);
+        //console.log(track_list);
+        //console.log(track_list_name);
+        res.send(track_list);
+    }
+});
 
 app.listen(port, () => {
     //console.log(`Listening on port ${port}`);
