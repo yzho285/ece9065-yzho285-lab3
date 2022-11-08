@@ -77,6 +77,7 @@ function SearchBytrackID(){
         })
         .catch(function(error) {
             console.log(error);
+            alert("Track id does not exist");
         });
     }
 }
